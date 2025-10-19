@@ -7,6 +7,7 @@ A powerful Neovim diagnostic plugin that shows diagnostic messages on the curren
 
 ## How it looks like:
 
+![demo](./doc/demo.gif)
 
 ## Installation
 
