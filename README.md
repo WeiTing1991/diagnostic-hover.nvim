@@ -75,8 +75,8 @@ require('diagnostic-hover').setup({
   skip_filetypes = { "oil" },
 })
 ```
-## Usage
 
 ## TODO:
 - [ ] add tests file
 - [ ] update cicd
+- [ ] pretty display and mutli-hover
