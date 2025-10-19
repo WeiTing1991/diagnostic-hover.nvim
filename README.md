@@ -16,10 +16,15 @@ A powerful Neovim diagnostic plugin that shows diagnostic messages on the curren
 ```lua
 {
 	'WeiTing1991/diagnostic-hover.nvim',
-	event = 'LspAttach',
-	config = function()
-		require('diagnostic-hover').setup()
-	end
+	opts = {}
+}
+-- or 
+{
+	'WeiTing1991/diagnostic-hover.nvim',
+	opts = {}
+  config = function()
+    require('diagnostic-hover').setup()
+  end
 }
 ```
 
@@ -38,21 +43,31 @@ use {
 Default configuration:
 ```lua
 require('diagnostic-hover').setup({
+  use_icons = true,
   diagnostic_icons = {
-    Error = "",
-    Warn = "",
-    Info = "",
-    Hint = "",
-  },
+		Error = " ",
+		Warn = " ",
+		Info = " ",
+		Hint = "󰠠 ",
+	},
   float_opts = {
+    focus = false,
+    scope = "line",
     border = "single",
+    style = "minimal",
+    header = "",
+    prefix = "󱓻 ",
+    source = "if_many",
+    wrap = true,
     max_width = 50,
   },
   auto_hide_delay = 1500, -- milliseconds
   show_virtual_text_on_current_line = true,
   hide_virtual_text_in_insert = true,
+  update_in_insert = true,
+  underline = true,
   keymap = {
-    show_float = "<C-k>",
+    show_float = "<A-k>"
     hide_float = "<Esc>",
   },
   skip_filetypes = { "oil" },
@@ -64,5 +79,4 @@ require('diagnostic-hover').setup({
 - Move your cursor to any line with diagnostics to see virtual text
 - Press `<A-k>` to show a detailed diagnostic float (auto-hides after 1.5s)
 - Press `<Esc>` to manually hide the float
-
 

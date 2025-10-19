@@ -9,6 +9,9 @@ local buffer = require("diagnostic-hover.buffer")
 
 -- Setup function
 M.setup = function(opts)
+  -- Mark that setup was called
+  vim.g.diagnostic_hover_setup_called = true
+
   -- Merge user config with defaults
   config_module.options = vim.tbl_deep_extend("force", config_module.defaults, opts or {})
 

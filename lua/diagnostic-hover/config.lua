@@ -30,7 +30,7 @@ M.defaults = {
   update_in_insert = true,
   underline = true,
   keymap = {
-    show_float = "<A-k>"
+    show_float = "<A-k>",
     hide_float = "<Esc>",
   },
   skip_filetypes = { "oil" },
