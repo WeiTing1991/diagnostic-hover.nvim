@@ -15,18 +15,18 @@ A powerful Neovim diagnostic plugin that shows diagnostic messages on the curren
 ### lazy.nvim
 ```lua
 {
-  'YOUR_USERNAME/diagnostic-hover.nvim',
-  event = 'LspAttach',
-  config = function()
-    require('diagnostic-hover').setup()
-  end
+	'WeiTing1991/diagnostic-hover.nvim',
+	event = 'LspAttach',
+	config = function()
+		require('diagnostic-hover').setup()
+	end
 }
 ```
 
 ### packer.nvim
 ```lua
 use {
-  'YOUR_USERNAME/diagnostic-hover.nvim',
+  'WeiTing1991/diagnostic-hover.nvim',
   config = function()
     require('diagnostic-hover').setup()
   end
