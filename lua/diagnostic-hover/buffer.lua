@@ -58,11 +58,21 @@ M.setup = function(bufnr, config)
       local diag = diagnostics[1]
       local hl_group, icon = get_diagnostic_info(diag.severity, config.diagnostic_icons)
 
-      vim.api.nvim_buf_set_extmark(bufnr, ns_id, curline - 1, -1, {
+      -- Build virtual text based on use_icons setting
+      local virt_text = {}
+      if config.use_icons then
         virt_text = {
           { icon, hl_group },
           { " " .. diag.message, hl_group },
-        },
+        }
+      else
+        virt_text = {
+          { diag.message, hl_group },
+        }
+      end
+
+      vim.api.nvim_buf_set_extmark(bufnr, ns_id, curline - 1, -1, {
+        virt_text = virt_text,
         virt_text_pos = "eol",
       })
     end
@@ -108,6 +118,15 @@ M.setup = function(bufnr, config)
   vim.api.nvim_create_autocmd({ "CursorMoved", "CursorMovedI" }, {
     buffer = bufnr,
     callback = function()
+      -- Hide float if cursor moved to a different line
+      if diagnostic_float.winid and vim.api.nvim_win_is_valid(diagnostic_float.winid) then
+        local curline = vim.api.nvim_win_get_cursor(0)[1]
+        if diagnostic_float.line and curline ~= diagnostic_float.line then
+          hide_diagnostic_float()
+        end
+      end
+
+      -- Only show virtual text if no float is currently shown
       if not (diagnostic_float.winid and vim.api.nvim_win_is_valid(diagnostic_float.winid)) then
         update_virtual_text()
       end

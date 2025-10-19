@@ -13,12 +13,13 @@ A powerful Neovim diagnostic plugin that shows diagnostic messages on the curren
 ## Installation
 
 ### lazy.nvim
+
 ```lua
 {
 	'WeiTing1991/diagnostic-hover.nvim',
 	opts = {}
 }
--- or 
+-- or
 {
 	'WeiTing1991/diagnostic-hover.nvim',
 	opts = {}
@@ -29,6 +30,7 @@ A powerful Neovim diagnostic plugin that shows diagnostic messages on the curren
 ```
 
 ### packer.nvim
+
 ```lua
 use {
   'WeiTing1991/diagnostic-hover.nvim',
@@ -41,6 +43,7 @@ use {
 ## Configuration
 
 Default configuration:
+
 ```lua
 require('diagnostic-hover').setup({
   use_icons = true,
@@ -67,16 +70,10 @@ require('diagnostic-hover').setup({
   update_in_insert = true,
   underline = true,
   keymap = {
-    show_float = "<A-k>"
+    show_float = vim.fn.has("mac") == 1 and "<M-k>" or "<A-l>",
     hide_float = "<Esc>",
   },
   skip_filetypes = { "oil" },
 })
 ```
-
 ## Usage
-
-- Move your cursor to any line with diagnostics to see virtual text
-- Press `<A-k>` to show a detailed diagnostic float (auto-hides after 1.5s)
-- Press `<Esc>` to manually hide the float
-
