@@ -36,7 +36,6 @@ M.defaults = {
   skip_filetypes = { "oil" },
 }
 
--- Current configuration (will be merged with user config)
 M.options = {}
 
 return M

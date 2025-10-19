@@ -2,15 +2,14 @@
 
 A powerful Neovim diagnostic plugin that shows diagnostic messages on the current line with smart virtual text and hover floats.
 
-## Features
+- Show diagnostic virtual text only on the current line
+- Smart diagnostic float on keybind with auto-hide
 
-- 🎯 Show diagnostic virtual text only on the current line
-- 🎈 Smart diagnostic float on keybind with auto-hide
-- 🎨 Customizable icons and colors
-- ⚡ Automatic sorting of diagnostics by severity
-- 🔧 Highly configurable
+## How it looks like:
+
 
 ## Installation
+
 
 ### lazy.nvim
 
@@ -77,3 +76,7 @@ require('diagnostic-hover').setup({
 })
 ```
 ## Usage
+
+## TODO:
+- [ ] add tests file
+- [ ] update cicd
