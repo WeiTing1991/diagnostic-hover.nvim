@@ -30,7 +30,7 @@ M.defaults = {
   update_in_insert = true,
   underline = true,
   keymap = {
-    show_float = vim.fn.has("mac") == 1 and "<M-k>" or "<A-l>",
+    show_float = vim.fn.has("mac") == 1 and "<M-k>" or "<A-K>",
     hide_float = "<Esc>",
   },
   skip_filetypes = { "oil" },
