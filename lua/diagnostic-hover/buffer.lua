@@ -1,5 +1,7 @@
 -- lua/diagnostic-hover/buffer.lua
 
+local float = require("diagnostic-hover.float")
+
 local M = {}
 
 -- Get diagnostic highlight group and icon
@@ -53,22 +55,47 @@ M.setup = function(bufnr, config)
     last_line = curline
     local diagnostics = vim.diagnostic.get(bufnr, { lnum = curline - 1 })
 
-    -- Show virtual text only for current line if it has diagnostics
-    if #diagnostics > 0 then
-      local diag = diagnostics[1]
-      local hl_group, icon = get_diagnostic_info(diag.severity, config.diagnostic_icons)
+    if #diagnostics == 0 then
+      return
+    end
 
-      -- Build virtual text based on use_icons setting
+    -- Sort by severity (most severe first)
+    table.sort(diagnostics, function(a, b)
+      return a.severity < b.severity
+    end)
+
+    if config.virtual_text_mode == "stacked" then
+      -- Stacked mode: each diagnostic on its own line below the code
+      local virt_lines = {}
+      for _, diag in ipairs(diagnostics) do
+        local hl_group, icon = get_diagnostic_info(diag.severity, config.diagnostic_icons)
+        local line_chunks = {}
+        if config.use_icons then
+          table.insert(line_chunks, { icon, hl_group })
+          table.insert(line_chunks, { " " .. diag.message, hl_group })
+        else
+          table.insert(line_chunks, { diag.message, hl_group })
+        end
+        table.insert(virt_lines, line_chunks)
+      end
+
+      vim.api.nvim_buf_set_extmark(bufnr, ns_id, curline - 1, -1, {
+        virt_lines = virt_lines,
+      })
+    else
+      -- Inline mode: all diagnostics concatenated on one line
       local virt_text = {}
-      if config.use_icons then
-        virt_text = {
-          { icon, hl_group },
-          { " " .. diag.message, hl_group },
-        }
-      else
-        virt_text = {
-          { diag.message, hl_group },
-        }
+      for i, diag in ipairs(diagnostics) do
+        local hl_group, icon = get_diagnostic_info(diag.severity, config.diagnostic_icons)
+        if i > 1 then
+          table.insert(virt_text, { config.inline_separator, "Comment" })
+        end
+        if config.use_icons then
+          table.insert(virt_text, { icon, hl_group })
+          table.insert(virt_text, { " " .. diag.message, hl_group })
+        else
+          table.insert(virt_text, { diag.message, hl_group })
+        end
       end
 
       vim.api.nvim_buf_set_extmark(bufnr, ns_id, curline - 1, -1, {
@@ -86,27 +113,22 @@ M.setup = function(bufnr, config)
 
   -- Show diagnostic float
   local function show_diagnostic_float()
-    local curline = vim.api.nvim_win_get_cursor(0)[1]
-    local diagnostics = vim.diagnostic.get(bufnr, { lnum = curline - 1 })
-
-    if #diagnostics == 0 then
-      return
-    end
-
     hide_virtual_text()
 
     if diagnostic_float.winid and vim.api.nvim_win_is_valid(diagnostic_float.winid) then
-      vim.api.nvim_win_close(diagnostic_float.winid, false)
+      float.close(diagnostic_float.winid)
     end
 
-    diagnostic_float.winid = vim.diagnostic.open_float(bufnr, config.float_opts)
-    diagnostic_float.line = curline
+    diagnostic_float.winid = float.open(bufnr, config)
+    if diagnostic_float.winid then
+      diagnostic_float.line = vim.api.nvim_win_get_cursor(0)[1]
+    end
   end
 
   -- Hide diagnostic float and return to normal
   local function hide_diagnostic_float()
     if diagnostic_float.winid and vim.api.nvim_win_is_valid(diagnostic_float.winid) then
-      vim.api.nvim_win_close(diagnostic_float.winid, false)
+      float.close(diagnostic_float.winid)
       diagnostic_float.winid = nil
       diagnostic_float.line = nil
     end
