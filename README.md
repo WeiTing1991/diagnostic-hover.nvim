@@ -66,6 +66,8 @@ require('diagnostic-hover').setup({
   },
   auto_hide_delay = 1500, -- milliseconds
   show_virtual_text_on_current_line = true,
+  virtual_text_mode = "stacked", -- "stacked" or "inline"
+  inline_separator = " | ",     -- separator for inline mode
   hide_virtual_text_in_insert = true,
   update_in_insert = true,
   underline = true,
@@ -76,8 +78,3 @@ require('diagnostic-hover').setup({
   skip_filetypes = { "oil" },
 })
 ```
-
-## TODO:
-- [ ] add tests file
-- [ ] update cicd
-- [ ] pretty display and mutli-hover
