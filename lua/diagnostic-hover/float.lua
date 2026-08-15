@@ -50,21 +50,26 @@ M.format_diagnostics = function(diagnostics, config)
     local icon_key = severity_icon_key[diag.severity] or "Error"
     local hl_group = severity_hl[diag.severity] or "DiagnosticError"
 
-    -- Message line: <icon> <message> or just <message>
-    local msg_line
-    if config.use_icons then
-      local icon = config.diagnostic_icons[icon_key]
-      msg_line = icon .. " " .. diag.message
-    else
-      msg_line = diag.message
+    -- Message lines: split on newlines since nvim_buf_set_lines doesn't allow them
+    local msg_parts = vim.split(diag.message, "\n", { plain = true })
+    for j, part in ipairs(msg_parts) do
+      local msg_line
+      if j == 1 and config.use_icons then
+        local icon = config.diagnostic_icons[icon_key]
+        msg_line = icon .. " " .. part
+      elseif j == 1 then
+        msg_line = part
+      else
+        msg_line = "  " .. part
+      end
+      table.insert(lines, msg_line)
+      table.insert(highlights, {
+        line = #lines - 1,
+        col_start = 0,
+        col_end = #msg_line,
+        hl_group = hl_group,
+      })
     end
-    table.insert(lines, msg_line)
-    table.insert(highlights, {
-      line = #lines - 1,
-      col_start = 0,
-      col_end = #msg_line,
-      hl_group = hl_group,
-    })
 
     -- Source line
     if show_source and diag.source then
