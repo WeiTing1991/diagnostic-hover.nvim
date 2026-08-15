@@ -6,7 +6,7 @@ local config = require("diagnostic-hover.config")
 
 h.describe("config defaults", function()
 	h.it("has virtual_text_mode default", function()
-		h.assert_eq(config.defaults.virtual_text_mode, "stacked")
+		h.assert_eq(config.defaults.virtual_text_mode, "float")
 	end)
 
 	h.it("has inline_separator default", function()
