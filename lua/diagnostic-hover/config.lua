@@ -31,6 +31,7 @@ M.defaults = {
   underline = true,
   virtual_text_mode = "float", -- "float", "virt_lines", or "inline"
   inline_separator = " | ",
+  auto_show_float = false, -- auto-show float on cursor move
   keymap = {
     show_float = vim.fn.has("mac") == 1 and "<M-k>" or "<A-K>",
     hide_float = "<Esc>",

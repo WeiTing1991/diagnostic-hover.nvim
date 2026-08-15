@@ -123,6 +123,17 @@ M.setup = function(bufnr, config)
         virt_text_pos = "eol",
       })
     end
+
+    -- Auto-show float if enabled and multiple diagnostics
+    if config.auto_show_float and #diagnostics > 1 then
+      if diagnostic_float.winid and vim.api.nvim_win_is_valid(diagnostic_float.winid) then
+        float.close(diagnostic_float.winid)
+      end
+      diagnostic_float.winid = float.open(bufnr, config)
+      if diagnostic_float.winid then
+        diagnostic_float.line = curline
+      end
+    end
   end
 
   -- Hide virtual text
