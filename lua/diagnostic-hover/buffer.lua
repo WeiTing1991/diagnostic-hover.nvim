@@ -64,8 +64,8 @@ M.setup = function(bufnr, config)
       return a.severity < b.severity
     end)
 
-    if config.virtual_text_mode == "stacked" then
-      -- Stacked mode: each diagnostic on its own line below the code
+    if config.virtual_text_mode == "virt_lines" then
+      -- Virt_lines mode: each diagnostic on its own line below the code (no float)
       local virt_lines = {}
       for _, diag in ipairs(diagnostics) do
         local hl_group, icon = get_diagnostic_info(diag.severity, config.diagnostic_icons)
@@ -82,8 +82,8 @@ M.setup = function(bufnr, config)
       vim.api.nvim_buf_set_extmark(bufnr, ns_id, curline - 1, -1, {
         virt_lines = virt_lines,
       })
-    else
-      -- Inline mode: all diagnostics concatenated on one line
+    elseif config.virtual_text_mode == "inline" then
+      -- Inline mode: all diagnostics concatenated on one line (no float)
       local virt_text = {}
       for i, diag in ipairs(diagnostics) do
         local hl_group, icon = get_diagnostic_info(diag.severity, config.diagnostic_icons)
@@ -102,6 +102,37 @@ M.setup = function(bufnr, config)
         virt_text = virt_text,
         virt_text_pos = "eol",
       })
+    else
+      -- Float mode (default): most severe diagnostic at EOL + auto-show float
+      local diag = diagnostics[1]
+      local hl_group, icon = get_diagnostic_info(diag.severity, config.diagnostic_icons)
+      local virt_text = {}
+      if config.use_icons then
+        virt_text = {
+          { icon, hl_group },
+          { " " .. diag.message, hl_group },
+        }
+      else
+        virt_text = {
+          { diag.message, hl_group },
+        }
+      end
+
+      vim.api.nvim_buf_set_extmark(bufnr, ns_id, curline - 1, -1, {
+        virt_text = virt_text,
+        virt_text_pos = "eol",
+      })
+
+      -- Auto-show float if multiple diagnostics on this line
+      if #diagnostics > 1 then
+        if diagnostic_float.winid and vim.api.nvim_win_is_valid(diagnostic_float.winid) then
+          float.close(diagnostic_float.winid)
+        end
+        diagnostic_float.winid = float.open(bufnr, config)
+        if diagnostic_float.winid then
+          diagnostic_float.line = curline
+        end
+      end
     end
   end
 

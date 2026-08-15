@@ -29,7 +29,7 @@ M.defaults = {
   hide_virtual_text_in_insert = true,
   update_in_insert = true,
   underline = true,
-  virtual_text_mode = "stacked", -- "stacked" or "inline"
+  virtual_text_mode = "float", -- "float", "virt_lines", or "inline"
   inline_separator = " | ",
   keymap = {
     show_float = vim.fn.has("mac") == 1 and "<M-k>" or "<A-K>",

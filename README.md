@@ -66,7 +66,7 @@ require('diagnostic-hover').setup({
   },
   auto_hide_delay = 1500, -- milliseconds
   show_virtual_text_on_current_line = true,
-  virtual_text_mode = "stacked", -- "stacked" or "inline"
+  virtual_text_mode = "float", -- "float", "virt_lines", or "inline"
   inline_separator = " | ",     -- separator for inline mode
   hide_virtual_text_in_insert = true,
   update_in_insert = true,
