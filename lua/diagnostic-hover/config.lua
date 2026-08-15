@@ -25,7 +25,7 @@ M.defaults = {
     max_width = 50,
   },
   auto_hide_delay = 1500, -- milliseconds
-  show_virtual_text_on_current_line = true,
+  show_virtual_text_on_current_line = false,
   hide_virtual_text_in_insert = true,
   update_in_insert = true,
   underline = true,
