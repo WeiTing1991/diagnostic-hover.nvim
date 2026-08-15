@@ -137,6 +137,16 @@ M.open = function(bufnr, config)
   width = math.min(width + 2, max_width)
   local height = #formatted.lines
 
+  -- Account for wrapped lines in height calculation
+  if config.float_opts.wrap then
+    local wrapped_height = 0
+    for _, line in ipairs(formatted.lines) do
+      local display_width = vim.fn.strdisplaywidth(line)
+      wrapped_height = wrapped_height + math.max(1, math.ceil(display_width / width))
+    end
+    height = wrapped_height
+  end
+
   -- Open float window
   local winid = vim.api.nvim_open_win(float_buf, false, {
     relative = "cursor",
@@ -148,6 +158,12 @@ M.open = function(bufnr, config)
     border = config.float_opts.border or "single",
     focusable = config.float_opts.focus or false,
   })
+
+  -- Enable word wrap in the float window
+  if config.float_opts.wrap then
+    vim.wo[winid].wrap = true
+    vim.wo[winid].linebreak = true
+  end
 
   return winid
 end
