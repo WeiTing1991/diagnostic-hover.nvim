@@ -65,7 +65,7 @@ M.setup = function(bufnr, config)
     end)
 
     if config.virtual_text_mode == "virt_lines" then
-      -- Virt_lines mode: each diagnostic on its own line below the code (no float)
+      -- Virt_lines mode: each diagnostic on its own line below the code
       local virt_lines = {}
       for _, diag in ipairs(diagnostics) do
         local hl_group, icon = get_diagnostic_info(diag.severity, config.diagnostic_icons)
@@ -83,7 +83,7 @@ M.setup = function(bufnr, config)
         virt_lines = virt_lines,
       })
     elseif config.virtual_text_mode == "inline" then
-      -- Inline mode: all diagnostics concatenated on one line (no float)
+      -- Inline mode: all diagnostics concatenated at EOL
       local virt_text = {}
       for i, diag in ipairs(diagnostics) do
         local hl_group, icon = get_diagnostic_info(diag.severity, config.diagnostic_icons)
@@ -103,7 +103,7 @@ M.setup = function(bufnr, config)
         virt_text_pos = "eol",
       })
     else
-      -- Float mode (default): most severe diagnostic at EOL + auto-show float
+      -- Float mode (default): most severe diagnostic at EOL
       local diag = diagnostics[1]
       local hl_group, icon = get_diagnostic_info(diag.severity, config.diagnostic_icons)
       local virt_text = {}
@@ -122,17 +122,6 @@ M.setup = function(bufnr, config)
         virt_text = virt_text,
         virt_text_pos = "eol",
       })
-
-      -- Auto-show float if multiple diagnostics on this line
-      if #diagnostics > 1 then
-        if diagnostic_float.winid and vim.api.nvim_win_is_valid(diagnostic_float.winid) then
-          float.close(diagnostic_float.winid)
-        end
-        diagnostic_float.winid = float.open(bufnr, config)
-        if diagnostic_float.winid then
-          diagnostic_float.line = curline
-        end
-      end
     end
   end
 
