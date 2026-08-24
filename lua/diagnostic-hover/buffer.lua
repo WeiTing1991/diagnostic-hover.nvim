@@ -103,25 +103,8 @@ M.setup = function(bufnr, config)
         virt_text_pos = "eol",
       })
     else
-      -- Float mode (default): most severe diagnostic at EOL
-      local diag = diagnostics[1]
-      local hl_group, icon = get_diagnostic_info(diag.severity, config.diagnostic_icons)
-      local virt_text = {}
-      if config.use_icons then
-        virt_text = {
-          { icon, hl_group },
-          { " " .. diag.message, hl_group },
-        }
-      else
-        virt_text = {
-          { diag.message, hl_group },
-        }
-      end
-
-      vim.api.nvim_buf_set_extmark(bufnr, ns_id, curline - 1, -1, {
-        virt_text = virt_text,
-        virt_text_pos = "eol",
-      })
+      -- Float mode (default): no inline virtual text, only float on keypress
+      return
     end
 
     -- Auto-show float if enabled and multiple diagnostics
