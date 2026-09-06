@@ -2,6 +2,13 @@
 
 ## [Unreleased]
 
+### Fixed
+
+- `hide_float` is now bound only while a float is on screen. It was registered
+  on every buffer attach, which claimed that key in every buffer for the whole
+  session even with no float open — the default `<Esc>` shadowed
+  `:nohlsearch`, and `q` shadowed macro recording.
+
 ## [0.2.0]
 
 ### Added

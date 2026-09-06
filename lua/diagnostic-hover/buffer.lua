@@ -125,6 +125,30 @@ M.setup = function(bufnr, config)
     last_line = nil
   end
 
+  local hide_diagnostic_float -- forward declaration, bind_hide_key needs it
+
+  -- The hide keymap is bound only while a float is on screen. Binding it on
+  -- attach would claim that key in every buffer for the whole session, so
+  -- whatever the user picks (<Esc>, q, ...) would lose its normal meaning.
+  local function bind_hide_key()
+    if not config.keymap.hide_float then
+      return
+    end
+    vim.keymap.set("n", config.keymap.hide_float, function()
+      hide_diagnostic_float()
+    end, {
+      buffer = bufnr,
+      desc = "Hide diagnostic hover",
+    })
+  end
+
+  local function unbind_hide_key()
+    if not config.keymap.hide_float then
+      return
+    end
+    pcall(vim.keymap.del, "n", config.keymap.hide_float, { buffer = bufnr })
+  end
+
   -- Show diagnostic float
   local function show_diagnostic_float()
     hide_virtual_text()
@@ -136,11 +160,14 @@ M.setup = function(bufnr, config)
     diagnostic_float.winid = float.open(bufnr, config)
     if diagnostic_float.winid then
       diagnostic_float.line = vim.api.nvim_win_get_cursor(0)[1]
+      bind_hide_key()
     end
   end
 
   -- Hide diagnostic float and return to normal
-  local function hide_diagnostic_float()
+  function hide_diagnostic_float()
+    unbind_hide_key()
+
     if diagnostic_float.winid and vim.api.nvim_win_is_valid(diagnostic_float.winid) then
       float.close(diagnostic_float.winid)
       diagnostic_float.winid = nil
@@ -177,6 +204,7 @@ M.setup = function(bufnr, config)
         if diagnostic_float.winid and vim.api.nvim_win_is_valid(diagnostic_float.winid) then
           vim.api.nvim_win_close(diagnostic_float.winid, false)
           diagnostic_float.winid = nil
+          unbind_hide_key()
         end
       end,
     })
@@ -207,14 +235,7 @@ M.setup = function(bufnr, config)
     })
   end
 
-  if config.keymap.hide_float then
-    vim.keymap.set("n", config.keymap.hide_float, function()
-      hide_diagnostic_float()
-    end, {
-      buffer = bufnr,
-      desc = "Hide diagnostic hover",
-    })
-  end
+  -- hide_float is bound on demand by show_diagnostic_float, not here
 
   -- Initial call
   vim.defer_fn(update_virtual_text, 200)
